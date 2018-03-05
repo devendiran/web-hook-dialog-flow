@@ -128,9 +128,11 @@ restService.post("/video", function (req, res) {
     speech: 'Enjoy the video',
     displayText: 'Enjoy the video',
     source: "webhook-echo-sample",
-    data:{
-      content:'<video height="400" width="300" src="youtu.be/MLeIBFYY6UY" controls="true"></video>',
-      type:'video'
+    data: {
+      content: `<video controls="true">
+      <source src="www.youtube.com/watch?v=3bGNuRtlqAQ" type="video/mp4" />
+  </video>`,
+      type: 'video'
     }
   });
 });
