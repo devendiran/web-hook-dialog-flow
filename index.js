@@ -130,7 +130,7 @@ restService.post("/video", function (req, res) {
     source: "webhook-echo-sample",
     data: {
       content: `<video controls="true">
-      <source src="/Wildlife.wmv" />
+      <source src="asserts/Wildlife.wmv" />
   </video>`,
       type: 'video'
     }
