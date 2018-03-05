@@ -35,7 +35,7 @@ restService.post("/audio", function(req, res) {
     //Speech Synthesis Markup Language 
     case "music one":
       speech =
-        '<iframe width="420" height="345" src="https://www.youtube.com/embed/tgbNymZ7vqY"></iframe>';
+        '<video width="420" height="345" src="https://www.youtube.com/embed/tgbNymZ7vqY"></video>';
       break;
     case "music two":
       speech =
