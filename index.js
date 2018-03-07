@@ -32,9 +32,9 @@ restService.post("/create-ticket", function (req, res) {
       req.body.result.parameters
       ? 'Seems like some problem. Speak again.'
       : '';
-  var type = req.body.result.parameters.IssueType;
-  var content = req.body.result.parameters.any;
-  var assignee = req.body.result.parameters.Assignee;
+  var type = req.body.result.parameters.Issue_Type.original;
+  var content = req.body.result.parameters.any.original;
+  var assignee = req.body.result.parameters.Assignee.original;
   var test = JSON.stringify(req.body);
   console.log(test);
   console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body.result.parameters}`)
