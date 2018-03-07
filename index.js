@@ -34,9 +34,9 @@ restService.post("/create-ticket", function (req, res) {
       : '';
   var test = JSON.stringify(req.body);
   console.log(test);
-  var type = req.body.result.parameters['Issue_Type.original'];
-  var content = req.body.result.parameters['any.original'];
-  var assignee = req.body.result.parameters['Assignee.original'];
+  var type = req.body.result.contexts.parameters['Issue_Type.original'];
+  var content = req.body.result.contexts.parameters['any.original'];
+  var assignee = req.body.result.contexts.parameters['Assignee.original'];
 
 
   console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body.result.parameters}`)
