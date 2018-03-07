@@ -32,11 +32,13 @@ restService.post("/create-ticket", function (req, res) {
       req.body.result.parameters
       ? 'Seems like some problem. Speak again.'
       : '';
-  var type = req.body.result.parameters.Issue_Type.original;
-  var content = req.body.result.parameters.any.original;
-  var assignee = req.body.result.parameters.Assignee.original;
   var test = JSON.stringify(req.body);
   console.log(test);
+  var type = req.body.result.parameters['Issue_Type.original'];
+  var content = req.body.result.parameters['any.original'];
+  var assignee = req.body.result.parameters['Assignee.original'];
+
+
   console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body.result.parameters}`)
   var issue = { 'type': type, 'content': content, 'user': assignee }
   createConnection(function (err, con) {
@@ -49,21 +51,21 @@ restService.post("/create-ticket", function (req, res) {
     }
 
     con.query(`INSERT INTO tickets SET ?`, issue, function (err, result, fields) {
-      console.log(err,'sddddd');
-        if (err) {
-          return res.json({
-            speech: 'Sorry unable to create ticket',
-            displayText: 'Sorry unable to create ticket',
-            source: "webhook-echo-sample"
-          });
-        } else {
-          return res.json({
-            speech: 'Ticket Create Successfully',
-            displayText: 'Ticket Create Successfully',
-            source: "webhook-echo-sample"
-          });
-        }
-      });
+      console.log(err, 'sddddd');
+      if (err) {
+        return res.json({
+          speech: 'Sorry unable to create ticket',
+          displayText: 'Sorry unable to create ticket',
+          source: "webhook-echo-sample"
+        });
+      } else {
+        return res.json({
+          speech: 'Ticket Create Successfully',
+          displayText: 'Ticket Create Successfully',
+          source: "webhook-echo-sample"
+        });
+      }
+    });
   });
 
 });
