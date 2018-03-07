@@ -35,7 +35,7 @@ restService.post("/create-ticket", function (req, res) {
   var type = req.body.result.parameters.IssueType;
   var content = req.body.result.parameters.any;
   var assignee = req.body.result.parameters.Assignee;
-  console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body}`)
+  console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body.result.parameters}`)
   var issue = { 'type': type, 'content': content, 'user': assignee }
   createConnection(function (err, con) {
     if (err) {
