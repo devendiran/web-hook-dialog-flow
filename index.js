@@ -2,8 +2,14 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-var mysql = require('mysql');
+const mysql = require('mysql');
 const restService = express();
+
+const actionHandler = {
+  'createticket': createTicket,
+  'productcatalog': getProductVideo,
+  'showticket': showTickets
+};
 
 restService.use(
   bodyParser.urlencoded({
@@ -11,11 +17,18 @@ restService.use(
   })
 );
 var createConnection = function (cb) {
+  // var con = mysql.createConnection({
+  //   host: "us-cdbr-iron-east-05.cleardb.net",
+  //   user: "b95532ff8d1308",
+  //   password: "f12a55ef",
+  //   database: "heroku_dd1418457119944",
+  //   port: "3306"
+  // });
   var con = mysql.createConnection({
-    host: "us-cdbr-iron-east-05.cleardb.net",
-    user: "b95532ff8d1308",
-    password: "f12a55ef",
-    database: "heroku_dd1418457119944",
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "mom",
     port: "3306"
   });
 
@@ -27,16 +40,17 @@ var createConnection = function (cb) {
 restService.use(bodyParser.json());
 
 restService.post("/create-ticket", function (req, res) {
-  var speech =
-    req.body.result &&
-      req.body.result.parameters
-      ? 'Seems like some problem. Speak again.'
-      : '';
-  var test = JSON.stringify(req.body);
-  console.log(test);
-  var type = req.body.result.contexts[0].parameters['Issue_Type.original'];
-  var content = req.body.result.contexts[0].parameters['any.original'];
-  var assignee = req.body.result.contexts[0].parameters['Assignee.original'];
+  let action = req.body.result.action.split('.')[0];
+  console.log(action);
+  actionHandler[action.toLowerCase()](req, res);
+});
+
+function createTicket(req, res) {
+  let inputContexts = req.body.result.contexts;
+
+  var type = inputContexts[0].parameters['Issue_Type.original'];
+  var content = inputContexts[0].parameters['any.original'];
+  var assignee = inputContexts[0].parameters['Assignee.original'];
 
 
   console.log(`type ${type}, content ${content}, assignee ${assignee}, ${req.body.result.parameters}`)
@@ -65,11 +79,63 @@ restService.post("/create-ticket", function (req, res) {
           source: "webhook-echo-sample"
         });
       }
+      con.end();
     });
   });
 
-});
+}
 
+function getProductVideo(req, res) {
+  let inputContexts = req.body.result.contexts;
+
+  return res.json({
+    speech: 'Enjoy the video',
+    displayText: 'Enjoy the video',
+    source: "webhook-echo-sample",
+    data: {
+      content: `<video controls="true">
+      <source src="https://s3.amazonaws.com/collaterals.compas.siemens-info.com/Content_Upload/Videos/V3_3D_Product_Videos/SIE_VI_LoadCenter.mp4"  type="video/mp4"/>
+  </video>`,
+      type: 'video'
+    }
+  });
+}
+
+function showTickets(req, res) {
+  let inputContexts = req.body.result.contexts;
+
+  createConnection(function (err, con) {
+    con.query(`SELECT id from tickets`, function (err, result, fields) {
+      if (err) {
+        return res.json({
+          speech: 'Sorry unable to fetch ticket',
+          displayText: 'Sorry unable to fetch ticket',
+          source: "webhook-echo-sample"
+        });
+      } else {
+        return res.json({
+          speech: 'These are the tickets available',
+          displayText: 'These are the tickets available',
+          source: "webhook-echo-sample",
+          data:{
+            tickets:result.map((data) => data.id)
+          }
+        });
+      }
+      con.end();
+    });
+  });
+}
+
+
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(reason, 'Unhandled Rejection at Promise', p);
+  })
+  .on('uncaughtException', err => {
+    console.error(err, 'Uncaught Exception thrown');
+    process.exit(1);
+  });
 // restService.post("/echo", function (req, res) {
 //   console.log(req.body)
 //   var speech =
